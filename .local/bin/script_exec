@@ -1,0 +1,2 @@
+#!/bin/sh
+$HOME/.local/bin/$(/bin/ls -A --ignore "files" $HOME/.local/bin/ | rofi -dmenu 2>/dev/null) 2>/dev/null

@@ -1,0 +1,2 @@
+#!/bin/sh
+shuf "$HOME/.local/bin/files/quotes.txt" | head -n 1

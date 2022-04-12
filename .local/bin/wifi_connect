@@ -1,0 +1,6 @@
+#!/bin/sh
+BSSID=$(nmcli device wifi | rofi -dmenu 2>/dev/null | cut -c8-26)
+[ "$BSSID" ] && password=$(rofi -dmenu -p "enter password" 2>/dev/null)
+[ "$password" ] && nmcli device wifi connect $BSSID password "$password"
+
+notify-send -t 5000 "Connection Status" "\n$( (ping -c1 archlinux.org || ping -c1 suckless.org || ping -c1 gnu.org) 2>/dev/null | tac | head -n 2 | tac | head -n 1)"

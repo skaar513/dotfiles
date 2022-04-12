@@ -1,0 +1,3 @@
+#!/bin/sh
+page=$(rofi -dmenu -p "Enter a page" -l 1 2>/dev/null)
+[ $page ] && man -Tpdf $page | zathura -
