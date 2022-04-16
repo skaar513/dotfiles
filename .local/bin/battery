@@ -1,2 +1,3 @@
 #!/bin/sh
-echo "$(cat /sys/class/power_supply/BAT1/capacity)% $(cat /sys/class/power_supply/BAT1/status)"
+[ "$(cat /sys/class/power_supply/BAT1/status)" = "Charging" ] && status="⚡"
+echo "$(cat /sys/class/power_supply/BAT1/capacity)%$status"

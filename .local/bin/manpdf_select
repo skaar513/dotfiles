@@ -1,3 +1,3 @@
 #!/bin/sh
-page=$(rofi -dmenu -p "Enter a page" -l 1 2>/dev/null)
-[ $page ] && man -Tpdf $page | zathura -
+	page=$(rofi -dmenu -theme-str "window{location:center;height:21.5%;}" -theme-str "entry{placeholder:\"Enter a Manpage\";}" -p "manual" -l 0 2>/dev/null)
+[ $page ] && man -Tpdf $page | zathura - &

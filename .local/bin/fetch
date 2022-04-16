@@ -1,0 +1,13 @@
+#!/bin/sh
+red="\033[0;31m"
+yellow="\033[1;33m"
+blue="\033[0;34m"
+green="\033[0;32m"
+magenta="\033[0;35m"
+nc="\033[0m"
+printf " $magenta$USER${yellow}@${magenta}$HOSTNAME${nc}\n"
+printf "${yellow}x ${green}--- ${red}x ${green}--- ${blue}x\n\n"
+printf "${red}os:${nc} $(cut -d' ' -f1 '/etc/issue')\n"
+printf "${yellow}kernel:${nc} $(uname -r | cut -d'-' -f1)\n"
+printf "${blue}shell:${nc}  ${SHELL##*/}\n"
+printf "${green}wm:${nc} fix me\n"

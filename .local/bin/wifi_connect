@@ -1,6 +1,38 @@
 #!/bin/sh
-BSSID=$(nmcli device wifi | rofi -dmenu 2>/dev/null | cut -c8-26)
-[ "$BSSID" ] && password=$(rofi -dmenu -p "enter password" 2>/dev/null)
-[ "$password" ] && nmcli device wifi connect $BSSID password "$password"
+# a script for basic management of wireless connections via nmcli
+mode=$(echo "Connect to a nearby network,Add a custom network,Delete an existing network" | rofi -dmenu -sep "," -theme-str "window{location:center;}" -i -l 3 -p "Wifi" -no-custom 2>/dev/null) && (
 
-notify-send -t 5000 "Connection Status" "\n$( (ping -c1 archlinux.org || ping -c1 suckless.org || ping -c1 gnu.org) 2>/dev/null | tac | head -n 2 | tac | head -n 1)"
+[ "$mode" ] && (
+
+([ "${mode##Connect*}" ] || (
+	all_networks=$(nmcli device wifi)
+	selected=$(echo "$all_networks" | rofi -dmenu -i -no-custom -theme-str "window{width:85%;location:center;}" -theme-str "element-text{font: \"Monospace 15.5px\";}" -p "Nearby Networks" 2>/dev/null) &&
+	(BSSID=$(echo "$selected" | cut -c8-26)
+	line_one=$(echo "$all_networks" | head -n 1)
+	SSID=$(echo "$selected" | cut -c28-$(expr $(echo "${line_one%MODE*}" | wc -m) - 1) | sed "s/\ *$//")
+	[ "${BSSID##*BSSID*}" ] || notify-send "Wifi Error" "Please select a valid network."
+	[ "${BSSID##*BSSID*}" ] && 
+		password=$(rofi -dmenu -l 0 -password -theme-str "window{location:center;height:21.5%;}" -theme-str "entry{placeholder:\"Enter the Password\";}" -theme-str "prompt{enabled:false;}" 2>/dev/null) &&
+		(notify-send 'Wifi Status' "Connecting to $SSID" &&
+		nmcli device wifi connect $BSSID password "$password"
+		connection_stat=$(cat /sys/class/net/wlan0/operstate)
+		connection_notify="$( [ ${connection_stat#down} ] && printf 'The Connection is UP!\nI Repeat, The Connection is UP!' || printf 'The Connection is down. Try rechecking the credentials')"
+		notify-send 'Wifi Status' "$connection_notify"
+		) ||
+		notify-send 'Wifi Alert' 'Selection aborted, no password was entered.'
+		)
+))
+
+([ "${mode##Add*}" ] ||
+	(wifi_name=$(rofi -dmenu -l 0 -theme-str "window{location:center;height:21.5%;}" -theme-str "entry{placeholder:\"Enter the Wifi name\";}" -theme-str "prompt{enabled:false;}" 2>/dev/null)
+
+	[ "$wifi_name" ] && 
+		password=$(rofi -dmenu -l 0 -password -theme-str "window{location:center;height:21.5%;}" -theme-str "entry{placeholder:\"Enter the Password\";}" -theme-str "prompt{enabled:false;}" 2>/dev/null) && 
+		notify-send "Wifi Notification" "Credentials for \"$wifi_name\" successfully saved!"))
+
+([ "${mode##Delete*}" ] || 
+	(nmcli con show | rofi -dmenu -i -no-custom -theme-str "window{width:65%;location:center;}" -theme-str "element-text{font: \"Monospace 15.5px\";}" 2>/dev/null)
+)
+
+)
+)
