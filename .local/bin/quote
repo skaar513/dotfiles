@@ -1,2 +1,2 @@
 #!/bin/sh
-shuf "$HOME/.local/bin/files/quotes.txt" | head -n 1
+cd $HOME/.local/bin/files && cat ./quotes.txt | shuf | head -n 1

@@ -15,7 +15,7 @@ mode=$(echo "Connect to a nearby network,Add a custom network,Delete an existing
 		password=$(rofi -dmenu -l 0 -password -theme-str "window{location:center;height:21.5%;}" -theme-str "entry{placeholder:\"Enter the Password\";}" -theme-str "prompt{enabled:false;}" 2>/dev/null) &&
 		(notify-send 'Wifi Status' "Connecting to $SSID" &&
 		nmcli device wifi connect $BSSID password "$password"
-		connection_stat=$(cat /sys/class/net/wlan0/operstate)
+		connection_stat=$(cat /sys/class/net/w*/operstate)
 		connection_notify="$( [ ${connection_stat#down} ] && printf 'The Connection is UP!\nI Repeat, The Connection is UP!' || printf 'The Connection is down. Try rechecking the credentials')"
 		notify-send 'Wifi Status' "$connection_notify"
 		) ||
